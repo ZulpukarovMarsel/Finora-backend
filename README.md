@@ -1,21 +1,4 @@
 # Finora API
-
-FastAPI + SQLAlchemy 2.0 + Alembic + PostgreSQL backend for the Finora app.
-The schema mirrors the SwiftData models 1:1 so the iOS `APIRepository`
-(when you build it) maps cleanly onto these endpoints.
-
-## Что реально протестировано
-
-Перед сборкой в архив это API было end-to-end проверено на настоящем
-PostgreSQL 16 (не на моках): регистрация/логин с JWT, кошелёк и
-доходы/расходы через `FinanceService` (включая отказ при нехватке
-средств), копилки с депозитом, кредиты с платежами, задачи и их
-переключение, привычки со streak, вода, книги с сессией чтения и
-обновлением текущей страницы, обучение (немецкие слова + математика),
-начисление XP и дневная сводка, а также проверка отказа при неверном
-пароле и без токена авторизации. Миграция Alembic сгенерирована и
-применена на этой же базе без ошибок.
-
 ## Стек
 
 - **FastAPI** — веб-фреймворк, автогенерация OpenAPI/Swagger
@@ -106,12 +89,3 @@ pip install -r requirements.txt
 alembic upgrade head
 uvicorn app.main:app --reload
 ```
-
-## Связь с iOS-клиентом
-
-Ничего в SwiftUI-коде клиента менять не нужно прямо сейчас — приложение
-продолжает работать оффлайн-first на SwiftData. Когда будете подключать
-этот бэкенд, создайте `APIFinanceRepository`, `APITaskRepository` и т.д.,
-реализующие те же протоколы из `Data/Repositories/RepositoryProtocols.swift`,
-и делающие `URLSession`-запросы к этим эндпоинтам вместо SwiftData —
-экраны (View) менять не придётся.
