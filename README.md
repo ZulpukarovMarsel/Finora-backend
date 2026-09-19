@@ -26,13 +26,6 @@ ReDoc: `http://localhost:8000/redoc`
 
 ## Миграции
 
-Первая миграция (`alembic/versions/b1a742b1d01c_initial_schema.py`) уже
-сгенерирована и протестирована — создана через `alembic revision --autogenerate`
-против реального PostgreSQL 16 и применена (`alembic upgrade head`) без ошибок,
-все 28 таблиц и индексы создаются корректно. При обычном `docker compose up`
-она применится автоматически (`alembic upgrade head` встроена в entrypoint
-`api`-сервиса).
-
 Дальше при каждом изменении моделей в `app/models/`:
 
 ```bash
