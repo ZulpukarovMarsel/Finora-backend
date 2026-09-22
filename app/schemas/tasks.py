@@ -3,7 +3,7 @@ from datetime import date, datetime
 
 from pydantic import BaseModel, ConfigDict
 
-from app.models.tasks import TaskPriority, TaskRepeatRule, WakeConfirmationMode
+from app.models.tasks import AlarmSound, TaskPriority, TaskRepeatRule, WakeConfirmationMode
 
 
 class TaskCreate(BaseModel):
@@ -18,6 +18,10 @@ class TaskCreate(BaseModel):
     reminder_offset_minutes: int | None = 5
     is_alarm: bool = False
     wake_confirmation_mode: WakeConfirmationMode = WakeConfirmationMode.none
+    alarm_language_id: uuid.UUID | None = None
+    alarm_sound: AlarmSound = AlarmSound.classic
+    custom_song_title: str | None = None
+    custom_song_persistent_id: int | None = None
 
 
 class TaskUpdate(BaseModel):
@@ -44,6 +48,10 @@ class TaskRead(BaseModel):
     is_alarm: bool
     wake_confirmation_mode: WakeConfirmationMode
     wake_confirmed_at: datetime | None
+    alarm_language_id: uuid.UUID | None
+    alarm_sound: AlarmSound
+    custom_song_title: str | None
+    custom_song_persistent_id: int | None
     created_at: datetime
 
 

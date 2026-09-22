@@ -57,3 +57,18 @@ class FoodItem(UUIDPKMixin, Base):
     carbs: Mapped[float] = mapped_column(Float, default=0)
     meal_type: Mapped[MealType] = mapped_column(Enum(MealType, name="meal_type"))
     date: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, index=True)
+
+
+# Single source of truth for the daily nutrition goal — mirrors the iOS
+# client's `NutritionGoal` SwiftData model. Previously the backend had no
+# equivalent at all; Settings/Today/Profile screens on the client now all
+# read/write this same record.
+class NutritionGoal(UUIDPKMixin, Base):
+    __tablename__ = "nutrition_goals"
+
+    user_id: Mapped[uuid.UUID] = mapped_column(PG_UUID(as_uuid=True), ForeignKey("users.id"), unique=True)
+    daily_calorie_goal: Mapped[float] = mapped_column(Float, default=2500)
+    protein_goal_grams: Mapped[float] = mapped_column(Float, default=120)
+    fat_goal_grams: Mapped[float] = mapped_column(Float, default=80)
+    carb_goal_grams: Mapped[float] = mapped_column(Float, default=300)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)

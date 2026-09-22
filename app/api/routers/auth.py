@@ -7,7 +7,8 @@ from app.core.database import get_db
 from app.core.security import create_access_token, hash_password, verify_password
 from app.models.finance import Wallet
 from app.models.user import User
-from app.models.water_nutrition import WaterGoal
+from app.models.water_nutrition import NutritionGoal, WaterGoal
+from app.models.workouts import WorkoutSettings
 from app.schemas.user import Token, UserCreate, UserLogin, UserRead
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -26,6 +27,8 @@ def register(payload: UserCreate, db: Session = Depends(get_db)):
     # Bootstrap the essentials every client screen expects to exist.
     db.add(Wallet(user_id=user.id))
     db.add(WaterGoal(user_id=user.id))
+    db.add(NutritionGoal(user_id=user.id))
+    db.add(WorkoutSettings(user_id=user.id))
     db.commit()
 
     token = create_access_token(subject=str(user.id))

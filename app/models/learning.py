@@ -57,16 +57,41 @@ class LearningSession(UUIDPKMixin, Base):
     goal: Mapped["LearningGoal"] = relationship(back_populates="sessions")
 
 
+# --- User-defined study languages -------------------------------------------
+#
+# Replaces the old hardcoded `Word.language_code` string: matches the iOS
+# client's "Языки" feature, where the user adds any language by name and
+# then builds a word/translation dictionary inside it.
+
+class StudyLanguage(UUIDPKMixin, Base):
+    __tablename__ = "study_languages"
+
+    user_id: Mapped[uuid.UUID] = mapped_column(PG_UUID(as_uuid=True), ForeignKey("users.id"), index=True)
+    name: Mapped[str] = mapped_column(String(80))
+    flag: Mapped[str] = mapped_column(String(8), default="🌐")
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
+
+    words: Mapped[list["Word"]] = relationship(back_populates="language", cascade="all, delete-orphan")
+
+
 class Word(UUIDPKMixin, Base):
     __tablename__ = "words"
 
     user_id: Mapped[uuid.UUID] = mapped_column(PG_UUID(as_uuid=True), ForeignKey("users.id"), index=True)
+    language_id: Mapped[uuid.UUID] = mapped_column(PG_UUID(as_uuid=True), ForeignKey("study_languages.id"), index=True)
     term: Mapped[str] = mapped_column(String(200))
     translation: Mapped[str] = mapped_column(String(200))
-    language_code: Mapped[str] = mapped_column(String(8), default="de")
     is_learned: Mapped[bool] = mapped_column(Boolean, default=False)
     last_reviewed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, index=True)
+
+    # Mistake tracking for the "Повторить" (review) queue — spec item 6 of
+    # the iOS test hub: a wrong test answer queues the word for review and
+    # the app needs real per-word mistake stats.
+    miss_count: Mapped[int] = mapped_column(Integer, default=0)
+    needs_review: Mapped[bool] = mapped_column(Boolean, default=False)
+
+    language: Mapped["StudyLanguage"] = relationship(back_populates="words")
 
 
 class MathExerciseRecord(UUIDPKMixin, Base):

@@ -28,7 +28,16 @@ class WakeConfirmationMode(str, enum.Enum):
     none = "none"
     tap = "tap"
     photo = "photo"
-    puzzle = "puzzle"
+    mathProblem = "mathProblem"
+    vocabGeneral = "vocabGeneral"
+    vocabLanguage = "vocabLanguage"
+
+
+class AlarmSound(str, enum.Enum):
+    classic = "classic"
+    gentle = "gentle"
+    urgent = "urgent"
+    custom = "custom"
 
 
 class TaskItem(UUIDPKMixin, Base):
@@ -51,6 +60,16 @@ class TaskItem(UUIDPKMixin, Base):
         Enum(WakeConfirmationMode, name="wake_confirmation_mode"), default=WakeConfirmationMode.none
     )
     wake_confirmed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    # Which StudyLanguage to draw words from when
+    # wake_confirmation_mode == vocabLanguage.
+    alarm_language_id: Mapped[uuid.UUID | None] = mapped_column(PG_UUID(as_uuid=True), ForeignKey("study_languages.id"), nullable=True)
+    alarm_sound: Mapped[AlarmSound] = mapped_column(Enum(AlarmSound, name="alarm_sound"), default=AlarmSound.classic)
+    # Set only when alarm_sound == custom — a song picked from the user's
+    # Music library on their device (playable only client-side; the
+    # backend just stores which one was chosen so it stays in sync across
+    # the user's devices).
+    custom_song_title: Mapped[str | None] = mapped_column(String(300), nullable=True)
+    custom_song_persistent_id: Mapped[int | None] = mapped_column(nullable=True)
 
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
 

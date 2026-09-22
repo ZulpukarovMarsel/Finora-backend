@@ -41,3 +41,12 @@ def pay_credit(credit_id: uuid.UUID, payload: AmountRequest, db: Session = Depen
     FinanceService(db).pay_credit(user.id, credit, payload.amount)
     db.refresh(credit)
     return credit
+
+
+@router.post("/{credit_id}/close", response_model=CreditRead)
+def close_credit_in_full(credit_id: uuid.UUID, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+    credit = _get_owned_credit(db, user, credit_id)
+    if credit.remaining_amount > 0:
+        FinanceService(db).pay_credit(user.id, credit, credit.remaining_amount)
+        db.refresh(credit)
+    return credit

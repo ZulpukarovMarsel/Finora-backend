@@ -103,6 +103,7 @@ class RecurringExpenseCreate(BaseModel):
     icon_name: str = "house.fill"
     day_of_month: int
     period: RecurrencePeriod = RecurrencePeriod.monthly
+    first_payment_date: date | None = None
 
 
 class RecurringExpenseRead(BaseModel):
@@ -115,3 +116,7 @@ class RecurringExpenseRead(BaseModel):
     period: RecurrencePeriod
     is_active: bool
     last_confirmed_date: datetime | None
+    first_payment_date: date
+    next_due_date: date
+    is_overdue: bool
+    can_pay: bool

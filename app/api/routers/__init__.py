@@ -13,6 +13,7 @@ from app.api.routers import (
     savings,
     tasks,
     water,
+    workouts,
 )
 
 api_router = APIRouter()
@@ -27,4 +28,5 @@ api_router.include_router(water.router)
 api_router.include_router(nutrition.router)
 api_router.include_router(books.router)
 api_router.include_router(learning.router)
+api_router.include_router(workouts.router)
 api_router.include_router(gamification.router)

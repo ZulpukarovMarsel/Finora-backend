@@ -70,3 +70,20 @@ class FoodItemRead(BaseModel):
     carbs: float
     meal_type: MealType
     date: datetime
+
+
+class NutritionGoalRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: uuid.UUID
+    daily_calorie_goal: float
+    protein_goal_grams: float
+    fat_goal_grams: float
+    carb_goal_grams: float
+    updated_at: datetime
+
+
+class NutritionGoalUpdate(BaseModel):
+    daily_calorie_goal: float
+    protein_goal_grams: float
+    fat_goal_grams: float
+    carb_goal_grams: float
